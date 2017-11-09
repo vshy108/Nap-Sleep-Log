@@ -54,3 +54,6 @@ buck-out/
 
 # VSCODE
 .vscode/
+
+# PRETTIER
+.prettierrc
