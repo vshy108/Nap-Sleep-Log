@@ -1,7 +1,7 @@
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import Home from "./presenter";
-import { actionCreators as timeActionCreator } from "../../redux/ducks/time";
+import Home from './presenter';
+import { actionCreators as timeActionCreator } from '../../redux/ducks/time';
 
 const mapStateToProps = state => ({
   startSleepTimestamps: state.time.startSleepTimestamps,
@@ -11,5 +11,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   doSaveStartSleep: timeActionCreator.doSaveStartSleep,
   doSaveEndSleep: timeActionCreator.doSaveEndSleep,
+  doRemoveStartSleep: timeActionCreator.doRemoveStartSleep,
+  doRemoveEndSleep: timeActionCreator.doRemoveEndSleep,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

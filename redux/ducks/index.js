@@ -1,6 +1,6 @@
 // @flow
-import nav from "./nav";
-import time from "./time";
+import nav from './nav';
+import time from './time';
 
 export default {
   nav,

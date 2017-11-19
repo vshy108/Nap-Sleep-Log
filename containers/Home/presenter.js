@@ -9,6 +9,8 @@ type Props = {
   doSaveEndSleep: Function,
   startSleepTimestamps: Array<number>,
   endSleepTimestamps: Array<number>,
+  doRemoveStartSleep: Function,
+  doRemoveEndSleep: Function,
 };
 
 class Home extends React.Component<Props> {
@@ -35,6 +37,8 @@ class Home extends React.Component<Props> {
         ))}
         <Button title="Start Sleep" onPress={() => this.props.doSaveStartSleep(Date.now())} />
         <Button title="End Sleep" onPress={() => this.props.doSaveEndSleep(Date.now())} />
+        <Button title="Remove Last Start Sleep" onPress={() => this.props.doRemoveStartSleep()} />
+        <Button title="Remove Last End Sleep" onPress={() => this.props.doRemoveEndSleep()} />
       </ScrollView>
     );
   }

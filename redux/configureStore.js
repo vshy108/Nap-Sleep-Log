@@ -1,11 +1,11 @@
 // @flow
-import { applyMiddleware, createStore, compose } from "redux";
-import { persistStore, persistCombineReducers } from "redux-persist";
-import storage from "redux-persist/es/storage";
-import { createEpicMiddleware } from "redux-observable";
-import { createLogger } from "redux-logger";
-import reducers from "./ducks";
-import rootEpic from "./epics";
+import { applyMiddleware, createStore, compose } from 'redux';
+import { persistStore, persistCombineReducers } from 'redux-persist';
+import storage from 'redux-persist/es/storage';
+import { createEpicMiddleware } from 'redux-observable';
+import { createLogger } from 'redux-logger';
+import reducers from './ducks';
+import rootEpic from './epics';
 
 const epicMiddleware = createEpicMiddleware(rootEpic);
 
@@ -18,7 +18,7 @@ const logger = createLogger({
 });
 
 const config = {
-  key: "root",
+  key: 'root',
   storage,
   blacklist: [],
 };

@@ -1,8 +1,8 @@
-import { Navigator } from "../../Navigator";
+import { Navigator } from '../../Navigator';
 
 const { getActionForPathAndParams, getStateForAction } = Navigator.router;
 
-const homePage = getActionForPathAndParams("Home");
+const homePage = getActionForPathAndParams('Home');
 const initialState = getStateForAction(homePage);
 
 export default function reducer(state = initialState, action) {
