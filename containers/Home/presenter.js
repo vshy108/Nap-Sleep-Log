@@ -90,6 +90,7 @@ class Home extends React.Component<Props> {
   }
 
   render() {
+    const { startSleepTimestamps, endSleepTimestamps } = this.props;
     return (
       <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
         <Text>Start sleep timestamps</Text>
@@ -100,10 +101,30 @@ class Home extends React.Component<Props> {
         {this.props.endSleepTimestamps.map(timestamp => (
           <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
         ))}
-        <Button title="Start Sleep" onPress={() => this.props.doSaveStartSleep(Date.now())} />
-        <Button title="End Sleep" onPress={() => this.props.doSaveEndSleep(Date.now())} />
-        <Button title="Remove Last Start Sleep" onPress={this.handleRemoveStartSleep} />
-        <Button title="Remove Last End Sleep" onPress={this.handleRemoveStopSleep} />
+        {startSleepTimestamps.length === endSleepTimestamps.length && [
+          <Button
+            key="Start Sleep"
+            title="Start Sleep"
+            onPress={() => this.props.doSaveStartSleep(Date.now())}
+          />,
+          <Button
+            key="Remove Last End Sleep"
+            title="Remove Last End Sleep"
+            onPress={this.handleRemoveStopSleep}
+          />,
+        ]}
+        {startSleepTimestamps.length === endSleepTimestamps.length + 1 && [
+          <Button
+            key="End Sleep"
+            title="End Sleep"
+            onPress={() => this.props.doSaveEndSleep(Date.now())}
+          />,
+          <Button
+            key="Remove Last Start Sleep"
+            title="Remove Last Start Sleep"
+            onPress={this.handleRemoveStartSleep}
+          />,
+        ]}
         {this.renderCheckTimestampLengthText()}
       </ScrollView>
     );
