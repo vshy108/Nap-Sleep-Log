@@ -43,6 +43,7 @@ class Home extends React.Component<Props> {
 
   handleRemoveStopSleep = () => {
     const { endSleepTimestamps } = this.props;
+    // avoid removal item from empty array
     if (endSleepTimestamps.length) {
       Alert.alert(
         'Remove Start Sleep',
@@ -57,6 +58,36 @@ class Home extends React.Component<Props> {
       );
     }
   };
+
+  calculateTimeDifference(difference: number) {
+    const truncateMilliseconds = Math.floor(difference / 1000);
+    let hours = Math.floor(truncateMilliseconds / 3600);
+    let minutes = Math.floor((truncateMilliseconds % 3600) / 60);
+
+    if (hours < 10) {
+      hours = `0${hours}`;
+    }
+    if (minutes < 10) {
+      minutes = `0${minutes}`;
+    }
+    return `Last sleep duration
+    ${hours} hours ${minutes} minutes`;
+  }
+
+  renderCheckTimestampLengthText() {
+    const { startSleepTimestamps, endSleepTimestamps } = this.props;
+    let displayText = '';
+    if (startSleepTimestamps.length > endSleepTimestamps.length) {
+      return <Text>Oh Yeah, you are sleeping.</Text>;
+    } else if (startSleepTimestamps.length < endSleepTimestamps.length) {
+      displayText = 'Oh No! how come u can end sleep without started sleeping?';
+    } else {
+      const lastStart = startSleepTimestamps[startSleepTimestamps.length - 1];
+      const lastEnd = endSleepTimestamps[endSleepTimestamps.length - 1];
+      displayText = this.calculateTimeDifference(lastEnd - lastStart);
+    }
+    return <Text>{displayText}</Text>;
+  }
 
   render() {
     return (
@@ -73,6 +104,7 @@ class Home extends React.Component<Props> {
         <Button title="End Sleep" onPress={() => this.props.doSaveEndSleep(Date.now())} />
         <Button title="Remove Last Start Sleep" onPress={this.handleRemoveStartSleep} />
         <Button title="Remove Last End Sleep" onPress={this.handleRemoveStopSleep} />
+        {this.renderCheckTimestampLengthText()}
       </ScrollView>
     );
   }
