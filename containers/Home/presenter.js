@@ -77,13 +77,17 @@ class Home extends React.Component<Props> {
   renderCheckTimestampLengthText() {
     const { startSleepTimestamps, endSleepTimestamps } = this.props;
     let displayText = '';
-    if (startSleepTimestamps.length > endSleepTimestamps.length) {
-      return <Text>Oh Yeah, you are sleeping.</Text>;
-    } else if (startSleepTimestamps.length < endSleepTimestamps.length) {
+    const startLength = startSleepTimestamps.length;
+    const endLength = endSleepTimestamps.length;
+    if (startLength > endLength) {
+      displayText = 'Oh Yeah, you are sleeping';
+    } else if (startLength < endLength) {
       displayText = 'Oh No! how come u can end sleep without started sleeping?';
+    } else if (startLength === 0 && endLength === 0) {
+      displayText = '';
     } else {
-      const lastStart = startSleepTimestamps[startSleepTimestamps.length - 1];
-      const lastEnd = endSleepTimestamps[endSleepTimestamps.length - 1];
+      const lastStart = startSleepTimestamps[startLength - 1];
+      const lastEnd = endSleepTimestamps[endLength - 1];
       displayText = this.calculateTimeDifference(lastEnd - lastStart);
     }
     return <Text>{displayText}</Text>;
