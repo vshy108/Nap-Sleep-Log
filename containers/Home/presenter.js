@@ -78,19 +78,34 @@ class Home extends React.Component<Props> {
     let displayText = '';
     const startLength = startSleepTimestamps.length;
     const endLength = endSleepTimestamps.length;
-    if (startLength > endLength) {
-      displayText = 'Oh Yeah, you are sleeping';
-    } else if (startLength < endLength) {
-      displayText = 'Oh No! how come u can end sleep without started sleeping?';
-    } else if (startLength === 0 && endLength === 0) {
-      displayText = '';
+    if (endLength === 0) {
+      displayText = `Last sleep duration
+        0 hours 0 minutes`;
     } else {
-      const lastStart = startSleepTimestamps[startLength - 1];
+      const lastStart = startSleepTimestamps[startLength - (startLength === endLength + 1 ? 2 : 1)];
       const lastEnd = endSleepTimestamps[endLength - 1];
       displayText = `Last sleep duration
         ${this.calculateTimeDifference(lastEnd - lastStart)}`;
     }
     return <Text>{displayText}</Text>;
+  }
+
+  renderSleepingStatusText() {
+    const { startSleepTimestamps, endSleepTimestamps } = this.props;
+    let displayText = '';
+    const startLength = startSleepTimestamps.length;
+    const endLength = endSleepTimestamps.length;
+    if (startLength > endLength) {
+      displayText = 'Sleeping';
+    } else {
+      displayText = 'Awake';
+    }
+    return (
+      <Text>
+        {`Status:
+        ${displayText}`}
+      </Text>
+    );
   }
 
   renderTotalSleepingTimeText() {
@@ -104,8 +119,10 @@ class Home extends React.Component<Props> {
         total += endSleepTimestamps[i] - startSleepTimestamps[i];
       }
       return (
-        <Text>{`Total sleeping time:
-        ${this.calculateTimeDifference(total)}`}</Text>
+        <Text>
+          {`Total sleeping time:
+          ${this.calculateTimeDifference(total)}`}
+        </Text>
       );
     }
     return null;
@@ -147,6 +164,7 @@ class Home extends React.Component<Props> {
             onPress={this.handleRemoveStartSleep}
           />,
         ]}
+        {this.renderSleepingStatusText()}
         {this.renderCheckTimestampLengthText()}
         {this.renderTotalSleepingTimeText()}
       </ScrollView>
