@@ -132,14 +132,10 @@ class Home extends React.Component<Props> {
     const { startSleepTimestamps, endSleepTimestamps } = this.props;
     return (
       <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
-        <Text>Start sleep timestamps</Text>
-        {this.props.startSleepTimestamps.map(timestamp => (
-          <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
-        ))}
-        <Text>End sleep timestamps</Text>
-        {this.props.endSleepTimestamps.map(timestamp => (
-          <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
-        ))}
+        {this.renderSleepingStatusText()}
+        {this.renderCheckTimestampLengthText()}
+        {this.renderTotalSleepingTimeText()}
+
         {startSleepTimestamps.length === endSleepTimestamps.length && [
           <Button
             key="Start Sleep"
@@ -164,9 +160,14 @@ class Home extends React.Component<Props> {
             onPress={this.handleRemoveStartSleep}
           />,
         ]}
-        {this.renderSleepingStatusText()}
-        {this.renderCheckTimestampLengthText()}
-        {this.renderTotalSleepingTimeText()}
+        <Text>Start sleep timestamps</Text>
+        {this.props.startSleepTimestamps.map(timestamp => (
+          <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
+        ))}
+        <Text>End sleep timestamps</Text>
+        {this.props.endSleepTimestamps.map(timestamp => (
+          <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
+        ))}
       </ScrollView>
     );
   }
