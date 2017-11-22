@@ -10,5 +10,6 @@ Create app to log down nap/sleeping time and duration
 - [ ] Auto start sleep time counting by screen lock or Internet connection from on to off
 - [x] Record sleep time
 - [ ] Display sleep time in different types of graphs
-- [ ] Local Storage, check storage limit before saving and give warning if almost exceeding the limit
+- [x] Local Storage
+- [ ] Check storage limit before saving and give warning if almost exceeding the limit
 - [ ] Have dashboard to show the statistic
