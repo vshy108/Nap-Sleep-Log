@@ -133,9 +133,10 @@ class Home extends React.Component<Props> {
     return (
       <ScrollView style={styles.container} keyboardShouldPersistTaps="always">
         {this.renderSleepingStatusText()}
+        <Text>{`Total days:
+          ${endSleepTimestamps.length}`}</Text>
         {this.renderCheckTimestampLengthText()}
         {this.renderTotalSleepingTimeText()}
-
         {startSleepTimestamps.length === endSleepTimestamps.length && [
           <Button
             key="Start Sleep"
