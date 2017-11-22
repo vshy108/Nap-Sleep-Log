@@ -13,3 +13,4 @@ Create app to log down nap/sleeping time and duration
 - [x] Local Storage
 - [ ] Check storage limit before saving and give warning if almost exceeding the limit
 - [ ] Have dashboard to show the statistic
+- [ ] Check time with ntp server to avoid large error (beware with the timezone)
