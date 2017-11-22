@@ -46,7 +46,7 @@ class Home extends React.Component<Props> {
     // avoid removal item from empty array
     if (endSleepTimestamps.length) {
       Alert.alert(
-        'Remove Start Sleep',
+        'Remove End Sleep',
         `${this.displayDateTime(endSleepTimestamps[endSleepTimestamps.length - 1])}`,
         [
           { text: 'OK', onPress: () => this.props.doRemoveEndSleep() },
