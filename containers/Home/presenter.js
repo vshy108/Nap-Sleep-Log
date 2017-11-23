@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { ScrollView, Button, Text, Alert } from 'react-native';
+import { ScrollView, Button, Text, Alert, View } from 'react-native';
 import Moment from 'moment';
 import styles from './style';
 
@@ -108,7 +108,7 @@ class Home extends React.Component<Props> {
     );
   }
 
-  renderTotalSleepingTimeText() {
+  renderTotalAndAverageSleepingTimeText() {
     const { startSleepTimestamps, endSleepTimestamps } = this.props;
     const startLength = startSleepTimestamps.length;
     const endLength = endSleepTimestamps.length;
@@ -118,14 +118,60 @@ class Home extends React.Component<Props> {
       for (let i = 0; i < effectiveStartLength; i += 1) {
         total += endSleepTimestamps[i] - startSleepTimestamps[i];
       }
-      return (
-        <Text>
+      return [
+        <Text key="total">
           {`Total sleeping time:
           ${this.calculateTimeDifference(total)}`}
-        </Text>
-      );
+        </Text>,
+        <Text key="average">
+          {`Average sleeping time:
+          ${this.calculateTimeDifference(total / endSleepTimestamps.length)}`}
+        </Text>,
+      ];
     }
     return null;
+  }
+
+  // latest one at top
+  renderSleepTimesCard() {
+    const { startSleepTimestamps, endSleepTimestamps } = this.props;
+    const startLength = startSleepTimestamps.length;
+    const endLength = endSleepTimestamps.length;
+    if (endLength === 0) {
+      return null;
+    } else if (startLength === endLength + 1) {
+      const cardsView = [];
+      for (let i = 0; i < endLength; i += 1) {
+        cardsView.push(
+          <View key={i} style={styles.cardContainer}>
+            <Text>Start: {this.displayDateTime(startSleepTimestamps[i])}</Text>
+            <Text>End: {this.displayDateTime(endSleepTimestamps[i])}</Text>
+            <Text>
+              Slept: {this.calculateTimeDifference(endSleepTimestamps[i] - startSleepTimestamps[i])}
+            </Text>
+          </View>
+        );
+      }
+      cardsView.push(
+        <View key={endLength} style={styles.cardContainer}>
+          <Text>Start: {this.displayDateTime(startSleepTimestamps[endLength])}</Text>
+        </View>
+      );
+      cardsView.reverse();
+      return cardsView;
+    }
+    const cardsView = this.props.startSleepTimestamps.map((timestamp, index) => (
+      <View key={index} style={styles.cardContainer}>
+        <Text>Start: {this.displayDateTime(timestamp)}</Text>
+        <Text>End: {this.displayDateTime(endSleepTimestamps[index])}</Text>
+        <Text>
+          Slept:{' '}
+          {this.calculateTimeDifference(endSleepTimestamps[index] - startSleepTimestamps[index])}
+        </Text>
+      </View>
+    ));
+    cardsView.reverse();
+    return cardsView;
   }
 
   render() {
@@ -136,7 +182,7 @@ class Home extends React.Component<Props> {
         <Text>{`Total days:
           ${endSleepTimestamps.length}`}</Text>
         {this.renderCheckTimestampLengthText()}
-        {this.renderTotalSleepingTimeText()}
+        {this.renderTotalAndAverageSleepingTimeText()}
         {startSleepTimestamps.length === endSleepTimestamps.length && [
           <Button
             key="Start Sleep"
@@ -161,14 +207,7 @@ class Home extends React.Component<Props> {
             onPress={this.handleRemoveStartSleep}
           />,
         ]}
-        <Text>Start sleep timestamps</Text>
-        {this.props.startSleepTimestamps.map(timestamp => (
-          <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
-        ))}
-        <Text>End sleep timestamps</Text>
-        {this.props.endSleepTimestamps.map(timestamp => (
-          <Text key={timestamp}>{this.displayDateTime(timestamp)}</Text>
-        ))}
+        {this.renderSleepTimesCard()}
       </ScrollView>
     );
   }

@@ -5,4 +5,13 @@ export default StyleSheet.create({
     flex: 1,
     padding: 8,
   },
+  cardContainer: {
+    flex: 1,
+    padding: 8,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 20,
+    minHeight: 100,
+  },
 });
