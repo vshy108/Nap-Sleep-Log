@@ -1,18 +1,16 @@
 // @flow
-import React from "react";
-import { BackHandler } from "react-native";
-import { connect } from "react-redux";
-import {
-  addNavigationHelpers,
-  NavigationActions,
-  StackNavigator,
-} from "react-navigation";
-import type { NavigationState } from "react-navigation/src/TypeDefinition";
+import React from 'react';
+import { BackHandler } from 'react-native';
+import { connect } from 'react-redux';
+import { addNavigationHelpers, NavigationActions, StackNavigator } from 'react-navigation';
+import type { NavigationState } from 'react-navigation/src/TypeDefinition';
 
-import HomeScreen from "./containers/Home";
+import HomeScreen from './src/containers/Home';
+import TimeChangeScreen from './src/containers/TimeChange';
 
 export const Navigator = StackNavigator({
   Home: { screen: HomeScreen },
+  TimeChange: { screen: TimeChangeScreen },
 });
 
 type Props = {
@@ -22,11 +20,11 @@ type Props = {
 
 class NavigatorWithState extends React.Component<Props> {
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.onBack);
+    BackHandler.addEventListener('hardwareBackPress', this.onBack);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener("hardwareBackPress", this.onBack);
+    BackHandler.removeEventListener('hardwareBackPress', this.onBack);
   }
 
   onBack = () => {

@@ -1,8 +1,8 @@
 // @flow
 import React from 'react';
-import { ScrollView, Button, Text, Alert, View } from 'react-native';
-import Moment from 'moment';
+import { ScrollView, Button, Text, Alert, View, TouchableOpacity } from 'react-native';
 import styles from './style';
+import { displayDateTime } from '../../common/handleNumber';
 
 type Props = {
   doSaveStartSleep: Function,
@@ -11,6 +11,8 @@ type Props = {
   endSleepTimestamps: Array<number>,
   doRemoveStartSleep: Function,
   doRemoveEndSleep: Function,
+  doNavigateTimeChange: Function,
+  doSetEditIndex: Function,
 };
 
 class Home extends React.Component<Props> {
@@ -18,18 +20,12 @@ class Home extends React.Component<Props> {
     title: `Home`,
   });
 
-  displayDateTime(timestamp: number) {
-    return Moment(timestamp)
-      .utcOffset(8)
-      .format('YYYY-MM-DD(ddd) hh:mm(A) Z');
-  }
-
   handleRemoveStartSleep = () => {
     const { startSleepTimestamps } = this.props;
     if (startSleepTimestamps.length) {
       Alert.alert(
         'Remove Start Sleep',
-        `${this.displayDateTime(startSleepTimestamps[startSleepTimestamps.length - 1])}`,
+        `${displayDateTime(startSleepTimestamps[startSleepTimestamps.length - 1])}`,
         [
           { text: 'OK', onPress: () => this.props.doRemoveStartSleep() },
           { text: 'Cancel', onPress: () => {} },
@@ -47,7 +43,7 @@ class Home extends React.Component<Props> {
     if (endSleepTimestamps.length) {
       Alert.alert(
         'Remove End Sleep',
-        `${this.displayDateTime(endSleepTimestamps[endSleepTimestamps.length - 1])}`,
+        `${displayDateTime(endSleepTimestamps[endSleepTimestamps.length - 1])}`,
         [
           { text: 'OK', onPress: () => this.props.doRemoveEndSleep() },
           { text: 'Cancel', onPress: () => {} },
@@ -73,6 +69,11 @@ class Home extends React.Component<Props> {
     return `${hours} hours ${minutes} minutes`;
   }
 
+  handleTimeChange(index: number) {
+    this.props.doSetEditIndex(index);
+    this.props.doNavigateTimeChange();
+  }
+
   renderCheckTimestampLengthText() {
     const { startSleepTimestamps, endSleepTimestamps } = this.props;
     let displayText = '';
@@ -80,7 +81,7 @@ class Home extends React.Component<Props> {
     const endLength = endSleepTimestamps.length;
     if (endLength === 0) {
       displayText = `Last sleep duration
-        0 hours 0 minutes`;
+        00 hours 00 minutes`;
     } else {
       const lastStart = startSleepTimestamps[startLength - (startLength === endLength + 1 ? 2 : 1)];
       const lastEnd = endSleepTimestamps[endLength - 1];
@@ -121,15 +122,24 @@ class Home extends React.Component<Props> {
       return [
         <Text key="total">
           {`Total sleeping time:
-          ${this.calculateTimeDifference(total)}`}
+        ${this.calculateTimeDifference(total)}`}
         </Text>,
         <Text key="average">
           {`Average sleeping time:
-          ${this.calculateTimeDifference(total / endSleepTimestamps.length)}`}
+        ${this.calculateTimeDifference(total / endSleepTimestamps.length)}`}
         </Text>,
       ];
     }
-    return null;
+    return [
+      <Text key="total">
+        {`Total sleeping time:
+        00 hours 00 minutes`}
+      </Text>,
+      <Text key="average">
+        {`Average sleeping time:
+        00 hours 00 minutes`}
+      </Text>,
+    ];
   }
 
   // latest one at top
@@ -138,37 +148,53 @@ class Home extends React.Component<Props> {
     const startLength = startSleepTimestamps.length;
     const endLength = endSleepTimestamps.length;
     if (endLength === 0) {
+      if (startLength === 1) {
+        return (
+          <TouchableOpacity key={0} onPress={() => this.handleTimeChange(0)}>
+            <View style={styles.cardContainer}>
+              <Text>Start: {displayDateTime(startSleepTimestamps[0])}</Text>
+            </View>
+          </TouchableOpacity>
+        );
+      }
       return null;
     } else if (startLength === endLength + 1) {
       const cardsView = [];
       for (let i = 0; i < endLength; i += 1) {
         cardsView.push(
-          <View key={i} style={styles.cardContainer}>
-            <Text>Start: {this.displayDateTime(startSleepTimestamps[i])}</Text>
-            <Text>End: {this.displayDateTime(endSleepTimestamps[i])}</Text>
-            <Text>
-              Slept: {this.calculateTimeDifference(endSleepTimestamps[i] - startSleepTimestamps[i])}
-            </Text>
-          </View>
+          <TouchableOpacity key={i} onPress={() => this.handleTimeChange(i)}>
+            <View style={styles.cardContainer}>
+              <Text>Start: {displayDateTime(startSleepTimestamps[i])}</Text>
+              <Text>End: {displayDateTime(endSleepTimestamps[i])}</Text>
+              <Text>
+                Slept:{' '}
+                {this.calculateTimeDifference(endSleepTimestamps[i] - startSleepTimestamps[i])}
+              </Text>
+            </View>
+          </TouchableOpacity>
         );
       }
       cardsView.push(
-        <View key={endLength} style={styles.cardContainer}>
-          <Text>Start: {this.displayDateTime(startSleepTimestamps[endLength])}</Text>
-        </View>
+        <TouchableOpacity key={endLength} onPress={() => this.handleTimeChange(endLength)}>
+          <View style={styles.cardContainer}>
+            <Text>Start: {displayDateTime(startSleepTimestamps[endLength])}</Text>
+          </View>
+        </TouchableOpacity>
       );
       cardsView.reverse();
       return cardsView;
     }
     const cardsView = this.props.startSleepTimestamps.map((timestamp, index) => (
-      <View key={index} style={styles.cardContainer}>
-        <Text>Start: {this.displayDateTime(timestamp)}</Text>
-        <Text>End: {this.displayDateTime(endSleepTimestamps[index])}</Text>
-        <Text>
-          Slept:{' '}
-          {this.calculateTimeDifference(endSleepTimestamps[index] - startSleepTimestamps[index])}
-        </Text>
-      </View>
+      <TouchableOpacity key={index} onPress={() => this.handleTimeChange(index)}>
+        <View style={styles.cardContainer}>
+          <Text>Start: {displayDateTime(timestamp)}</Text>
+          <Text>End: {displayDateTime(endSleepTimestamps[index])}</Text>
+          <Text>
+            Slept:{' '}
+            {this.calculateTimeDifference(endSleepTimestamps[index] - startSleepTimestamps[index])}
+          </Text>
+        </View>
+      </TouchableOpacity>
     ));
     cardsView.reverse();
     return cardsView;

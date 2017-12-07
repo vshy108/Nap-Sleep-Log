@@ -2,7 +2,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import createStore from './redux/configureStore';
+import createStore from './src/redux/configureStore';
 import NavigatorWithState from './Navigator';
 
 const { store, persistor } = createStore();
