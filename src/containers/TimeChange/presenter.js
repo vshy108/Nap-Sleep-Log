@@ -98,7 +98,7 @@ class TimeChange extends React.Component<Props, State> {
           isVisible={this.state.isDateTimePickerVisible}
           onConfirm={this.handleDatePicked}
           onCancel={this.hideDateTimePicker}
-          mode="time"
+          mode="datetime"
           date={datetimeSelected}
           is24Hour={false}
         />
