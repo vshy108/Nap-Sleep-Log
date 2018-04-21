@@ -1,8 +1,12 @@
 // @flow
 import React from 'react';
-import { ScrollView, Button, Text, Alert, View, TouchableOpacity } from 'react-native';
+import { ScrollView, Button, Text, Alert, View, TouchableOpacity, Platform } from 'react-native';
+import RNFetchBlob from 'react-native-fetch-blob';
+
 import styles from './style';
 import { displayDateTime } from '../../common/handleNumber';
+
+const { android: RNFetchBlobAndroid, ios: RNFetchBlobIos } = RNFetchBlob;
 
 type Props = {
   doSaveStartSleep: Function,
@@ -72,6 +76,112 @@ class Home extends React.Component<Props> {
   handleTimeChange(index: number) {
     this.props.doSetEditIndex(index);
     this.props.doNavigateTimeChange();
+  }
+
+  handleOpenFileIos(pathToWrite: string) {
+    Alert.alert(
+      'Success',
+      `Wrote file to ${pathToWrite} and open it now?`,
+      [
+        {
+          text: 'Yes',
+          onPress: () =>
+            RNFetchBlobIos.previewDocument(pathToWrite).catch(() =>
+              Alert.alert(
+                'Cannot open CSV file',
+                'Please download viewer supports csv file',
+                [
+                  {
+                    text: 'Yes',
+                    onPress: () => {},
+                  },
+                ],
+                {
+                  cancelable: true,
+                }
+              )),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  }
+
+  handleOpenFileAndroid(pathToWrite: string) {
+    Alert.alert(
+      'Success',
+      `Wrote file to ${pathToWrite} and open it now?`,
+      [
+        {
+          text: 'Yes',
+          onPress: () =>
+            RNFetchBlobAndroid.actionViewIntent(pathToWrite, 'text/csv').catch(() =>
+              Alert.alert(
+                'Cannot open CSV file',
+                'Please download viewer supports csv file',
+                [
+                  {
+                    text: 'Yes',
+                    onPress: () => {},
+                  },
+                ],
+                {
+                  cancelable: true,
+                }
+              )),
+        },
+        { text: 'No', onPress: () => {} },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  }
+
+  handleWriteFileFail(err: Object) {
+    Alert.alert('Fail', `Error: ${err.toString}`, [{ text: 'OK', onPress: () => {} }], {
+      cancelable: true,
+    });
+  }
+
+  handleOpenFile(pathToWrite: string, isAndroid: boolean) {
+    if (isAndroid) {
+      this.handleOpenFileAndroid(pathToWrite);
+    } else {
+      this.handleOpenFileIos(pathToWrite);
+    }
+  }
+
+  handleSaveAndOpenFile(csvString: string) {
+    const baseFolder =
+      Platform.OS === 'ios' ? RNFetchBlob.fs.dirs.DocumentDir : RNFetchBlob.fs.dirs.DownloadDir;
+    const pathToWrite = `${baseFolder}/nss_${Date.now()}.csv`;
+    RNFetchBlob.fs
+      .writeFile(pathToWrite, csvString, 'utf8')
+      .then(() => {
+        this.handleOpenFile(pathToWrite, Platform.OS !== 'ios');
+      })
+      .catch(err => this.handleWriteFileFail(err));
+  }
+
+  handleExportCsv() {
+    const { startSleepTimestamps, endSleepTimestamps } = this.props;
+    // construct csvString
+    const headerString = 'starttimestamp,endtimestamp\n';
+    const rowString = startSleepTimestamps
+      .map((startTimestamp, index) => {
+        if (endSleepTimestamps[index]) {
+          return `${startTimestamp},${endSleepTimestamps[index]}\n`;
+        }
+        return `${startTimestamp}\n`;
+      })
+      .join('');
+    const csvString = `${headerString}${rowString}`;
+
+    // write the current list of timestamps to a local csv file
+    this.handleSaveAndOpenFile(csvString);
   }
 
   renderCheckTimestampLengthText() {
@@ -233,6 +343,7 @@ class Home extends React.Component<Props> {
             onPress={this.handleRemoveStartSleep}
           />,
         ]}
+        <Button key="Export CSV" title="Export CSV" onPress={() => this.handleExportCsv()} />
         {this.renderSleepTimesCard()}
       </ScrollView>
     );

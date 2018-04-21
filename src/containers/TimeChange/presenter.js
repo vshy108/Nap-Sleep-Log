@@ -23,8 +23,6 @@ class TimeChange extends React.Component<Props, State> {
     isStart: true,
   };
 
-  showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
-
   hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
   handleShowTimePicker = (isStart: boolean) => {
