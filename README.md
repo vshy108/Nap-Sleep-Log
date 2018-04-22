@@ -2,7 +2,7 @@
 Create app to log down nap/sleeping time and duration
 
 # Todo
-- [ ] Export result as excel-like file
+- [x] Export result as excel-like file (csv)
 - [ ] Set password lock
 - [ ] Set alarm
 - [ ] Choose nap type: Short nap (< 45 mins) or Long nap (> 90 mins)
